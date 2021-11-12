@@ -15,7 +15,7 @@
 	beta = laminarTransport.betaHe();
 	cp = laminarTransport.cpHe();
     rhok = 1.0 - beta*(T - TRef);
-	gradT = fvc::grad(T);	
+	gradT = fvc::grad(T)-fvc::grad(p*(rho/rhok))/rho/sHe;	
 	magGradT2 = pow(mag(gradT),2);
 	// (1/(f|gradT|^2))^(1/3)
 	kHe = 
