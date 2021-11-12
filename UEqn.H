@@ -2,7 +2,9 @@
 
     MRF.correctBoundaryVelocity(U);
 
-	volVectorField gradT(fvc::grad(T));
+	//czy ta zmienna jest widoczna w TEqn czy znika zaraz po 
+	//opuszczeniu UEqn?
+	//volVectorField gradT(fvc::grad(T));
 	
 	// Update properties for M
 	rho = laminarTransport.rhoHe();
@@ -13,9 +15,24 @@
 	beta = laminarTransport.betaHe();
 	cp = laminarTransport.cpHe();
     rhok = 1.0 - beta*(T - TRef);
+	gradT = fvc::grad(T);	
+	magGradT2 = pow(mag(gradT),2);
+	// (1/(f|gradT|^2))^(1/3)
+	kHe = 
+	pow
+	(
+		laminarTransport.onebyf()/
+		max
+		(
+			//pow(mag(gradT),2), 
+			magGradT2,
+			dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
+		), 
+		1./3
+	);
 	// To jest potrzebne do alphatJayatille....
-	Pr = cp*laminarTransport.etaHe()/
-	pow(laminarTransport.onebyf()/max(pow(mag(fvc::grad(T)),2), dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)), 1./3);
+	Pr = cp*laminarTransport.etaHe()/kHe;
+	//pow(laminarTransport.onebyf()/max(pow(mag(fvc::grad(T)),2), dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)), 1./3);
 
 	volVectorField M
 	(
@@ -25,7 +42,8 @@
 			(
 				sHe/AGM/rhon/max
 				(
-					pow(mag(fvc::grad(T)),2), 
+					//pow(mag(fvc::grad(T)),2), 
+					magGradT2,
 					dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
 				),2./3
 			)*gradT*gradT
@@ -34,7 +52,8 @@
 	    (
 			pow(rhos,3)*sHe/AGM/pow(rho,3)/rhon/max
 			(
-				pow(mag(fvc::grad(T)),2), 
+				//pow(mag(fvc::grad(T)),2), 
+				magGradT2,
 				dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
 			),1./3
 		)*

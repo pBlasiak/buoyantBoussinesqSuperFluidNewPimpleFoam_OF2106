@@ -4,15 +4,17 @@
     alphat = turbulence->nut()/Prt;
     alphat.correctBoundaryConditions();
 
-	alphaEff = 	pow
-		(
-			laminarTransport.onebyf()/max
-			(
-				//pow(mag(fvc::grad(T)),2), 
-				pow(mag(gradT),2), 
-				dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
-			), 1./3
-		)/(rho/rhok)/cp
+	alphaEff = 	
+		//pow
+		//(
+			//laminarTransport.onebyf()/max
+			//(
+			//	//pow(mag(fvc::grad(T)),2), 
+			//	pow(mag(gradT),2), 
+			//	dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
+			//), 1./3
+		//)
+		kHe/(rho/rhok)/cp
 	  + alphat
 	;
 

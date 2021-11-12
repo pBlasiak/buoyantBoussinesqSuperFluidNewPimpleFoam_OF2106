@@ -49,9 +49,26 @@
 
     #include "continuityErrs.H"
 
-	Un = U - pow(pow(rhos,3)*sHe/AGM/pow(rho,3)/rhon/max(pow(mag(fvc::grad(T)),2), dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)), 1./3)*fvc::grad(T);
+	//Un liczone jako nowe U odjac zmienne z poprzedniego dt???
+	Un = U - pow
+		     (
+				pow(rhos,3)*sHe/AGM/pow(rho,3)/rhon/max
+				(
+					//pow(mag(fvc::grad(T)),2), 
+					magGradT2,
+					dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
+				//), 1./3)*fvc::grad(T);
+				), 1./3)*gradT;
 	Un.correctBoundaryConditions();
-	Us = U + pow(pow(rhon,3)*sHe/AGM/pow(rho,3)/rhon/max(pow(mag(fvc::grad(T)),2), dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)), 1./3)*fvc::grad(T);
+	Us = U + pow
+		     (
+				pow(rhon,3)*sHe/AGM/pow(rho,3)/rhon/max
+				(
+					//pow(mag(fvc::grad(T)),2), 
+					magGradT2,
+					dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
+				//), 1./3)*fvc::grad(T);
+				), 1./3)*gradT;
 	Us.correctBoundaryConditions();
 	UnmUs = Un - Us;
 	

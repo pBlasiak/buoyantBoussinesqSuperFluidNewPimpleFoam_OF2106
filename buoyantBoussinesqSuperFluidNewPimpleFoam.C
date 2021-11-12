@@ -120,6 +120,7 @@ int main(int argc, char *argv[])
         }
 
 		// updates q
+		// teraz q liczone na bazie stare rhos i sHe i nowe T, Un i Us
 		q = fvc::interpolate(rhos*sHe*T*(Un.component(1) - Us.component(1)));
 		Info << sHe.weightedAverage(mesh.V()) << endl;
 		Info << rhos.weightedAverage(mesh.V()) << endl;
@@ -176,9 +177,8 @@ int main(int argc, char *argv[])
 		//}
 
 		// Tutaj pewna niescislosc bo nowo liczony gradT a stare alphaEff, cp i rho
-		// pytanie czy nie ma byc dzielone przez rho0 = rho/rhok?
         surfaceScalarField heatFluxFromAlphaEff =
-			fvc::interpolate(alphaEff*cp*rho)*(fvc::snGrad(T));
+			fvc::interpolate(alphaEff*cp*(rho/rhok))*(fvc::snGrad(T));
 			//fvc::interpolate(alphaEff*cp*rho)*(gradT + gradp);
 
         const surfaceScalarField::Boundary& patchHeatFlux2 =
