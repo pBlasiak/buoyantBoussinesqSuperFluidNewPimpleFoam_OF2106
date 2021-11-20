@@ -15,21 +15,21 @@
 	beta = laminarTransport.betaHe();
 	cp = laminarTransport.cpHe();
     rhok = 1.0 - beta*(T - TRef);
-	gradT = fvc::grad(T)-fvc::grad(p*(rho/rhok))/rho/sHe;	
-	magGradT2 = pow(mag(gradT),2);
+	if(gradP)
+	{
+		Info<< "Licze z gradP!!!!" << endl;
+		gradT = fvc::grad(T)-fvc::grad(p*(rho/rhok))/rho/sHe;	
+	}
+	else
+	{
+		gradT = fvc::grad(T);	
+	}
+	magGradT = max(mag(gradT), dimensionedScalar("small", dimTemperature/dimLength, SMALL)); 
+	magGradT2 = pow(magGradT,2);
+	
 	// (1/(f|gradT|^2))^(1/3)
-	kHe = 
-	pow
-	(
-		laminarTransport.onebyf()/
-		max
-		(
-			//pow(mag(gradT),2), 
-			magGradT2,
-			dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
-		), 
-		1./3
-	);
+	kHe = pow(laminarTransport.onebyf()/magGradT2, 1./3);
+
 	// To jest potrzebne do alphatJayatille....
 	Pr = cp*laminarTransport.etaHe()/kHe;
 	//pow(laminarTransport.onebyf()/max(pow(mag(fvc::grad(T)),2), dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)), 1./3);
@@ -38,29 +38,17 @@
 	(
 		fvc::div
 		(
-			rhon*rhos/rho*pow
-			(
-				sHe/AGM/rhon/max
-				(
-					//pow(mag(fvc::grad(T)),2), 
-					magGradT2,
-					dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
-				),2./3
-			)*gradT*gradT
+			rhon*rhos/rho*pow(sHe/AGM/rhon/magGradT2, 2./3)*gradT*gradT
 		)/(rho/rhok)
 	  + laminarTransport.etaHe()/(rho/rhok)*pow
 	    (
-			pow(rhos,3)*sHe/AGM/pow(rho,3)/rhon/max
-			(
-				//pow(mag(fvc::grad(T)),2), 
-				magGradT2,
-				dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
-			),1./3
+			pow(rhos,3)*sHe/AGM/pow(rho,3)/rhon/magGradT2, 1./3
 		)*
 		(
 			fvc::laplacian(gradT) + 1./3*fvc::grad(fvc::div(gradT))
 		)
 	);
+	Info<< "max(M) = " << max(M) << endl;
 
 	// TODO: zastanowic sie czy nie powinno byc
 	// rho pod pochodna jak jest w buoyantPimpleFoam
@@ -75,6 +63,9 @@
         fvm::ddt(U) + fvm::div(phi, U)
       + MRF.DDt(U)
       + turbulence->divDevReff(U)
+	  //- fvm::laplacian(laminarTransport.etaHe()/(rho/rhok), U)
+      //- fvc::div(laminarTransport.etaHe()/(rho/rhok)*dev(fvc::grad(U)().T()))
+	  //+ laminarTransport.etaHe()/(rho/rhok)*fvm::laplacian(U)
      ==
         fvOptions(U)
     );

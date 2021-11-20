@@ -14,6 +14,8 @@
       + phig
       + phiM
     );
+	Info<< "max(phig) = " << max(phig) << endl;
+	Info<< "max(phiM) = " << max(phiM) << endl;
 
     MRF.makeRelative(phiHbyA);
 
@@ -76,6 +78,7 @@
         << max(mag(U)).value() <<endl;
 
     p = p_rgh + rhok*gh;
+	P = p*(rho/rhok);
 
     if (p_rgh.needReference())
     {

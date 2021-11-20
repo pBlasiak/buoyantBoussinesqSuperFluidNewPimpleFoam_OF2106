@@ -215,6 +215,19 @@ if (p_rgh.needReference())
 
 mesh.setFluxRequired(p_rgh.name());
 
+volScalarField P
+(
+    IOobject
+    (
+        "P",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    (p_rgh + rhok*gh)*(rho/rhok)
+);
+
 #include "createMRF.H"
 #include "createIncompressibleRadiationModel.H"
 #include "createFvOptions.H"
@@ -330,7 +343,7 @@ volVectorField gradT
 );
 gradT = fvc::grad(T);
 
-volScalarField magGradT2
+volScalarField magGradT
 (
     IOobject
     (
@@ -341,6 +354,36 @@ volScalarField magGradT2
         IOobject::NO_WRITE
     ),
 	mesh,
+    dimensionedScalar("small", dimensionSet(0,-1,0,1,0,0,0), SMALL)
+);
+magGradT = mag(gradT);
+
+volScalarField magGradT2
+(
+    IOobject
+    (
+        "magGradT2",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+	mesh,
     dimensionedScalar("small", dimensionSet(0,-2,0,2,0,0,0), SMALL)
 );
-magGradT2 = pow(mag(gradT),2);
+//magGradT2 = 
+//		max
+//		(
+//			pow(mag(gradT),2),
+//			dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
+//		); 
+
+	Info<< "IIIIIIIIIIIIIIIIIII" << magGradT2 << endl;
+	rho = laminarTransport.rhoHe();
+	rhon = laminarTransport.rhon();
+	rhos = laminarTransport.rhos();
+	AGM = laminarTransport.AGMHe();
+	sHe = laminarTransport.sHe();
+	beta = laminarTransport.betaHe();
+	cp = laminarTransport.cpHe();
+    rhok = 1.0 - beta*(T - TRef);

@@ -35,3 +35,13 @@ volScalarField Pr
 
 // Turbulent Prandtl number
 dimensionedScalar Prt("Prt", dimless, laminarTransport);
+
+bool gradP
+(
+	laminarTransport.lookupOrDefault("gradP", false)
+);
+
+bool mutualFrictionGM
+(
+	laminarTransport.lookupOrDefault("mutualFrictionGM", false)
+);
