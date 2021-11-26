@@ -28,12 +28,41 @@
 	magGradT2 = pow(magGradT,2);
 	
 	// (1/(f|gradT|^2))^(1/3)
-	kHe = pow(laminarTransport.onebyf()/magGradT2, 1./3);
+	//kHe = pow(laminarTransport.onebyf()/magGradT2, 1./3);  // HEPAK
+	kHe = pow(1./(AGM*rhon/pow(rhos*sHe*T,3)/sHe)/magGradT2, 1./3); // KITAMURA
+	
+	//const dimensionedScalar sLambda("sLambda", dimensionSet(0,2,-2,-1,0,0,0), 1560);
+	//const dimensionedScalar Ac("Ac", dimensionSet(-1,1,1,0,0,0,0), 1297);
+	//const dimensionedScalar TLambda("TLambda", dimTemperature, 2.168);
+	//const dimensionedScalar c("c", dimTemperature, 0.01);
+	//kHe = pow(1./(Ac/rho/rho/pow(sLambda,4)/pow(TLambda,3)*
+	//			pow(pow((T+c)/(TLambda+c),5.7)*(1-pow((T+c)/(TLambda+c),5.7)),-3))
+	//		/magGradT2, 1./3); // SUEKANE
 
+	//Info<< "f^-1 = " << 1./(Ac/rho/rho/pow(sLambda,4)/pow(TLambda,3)*
+	//			pow(pow((T+c)/(TLambda+c),5.7)*(1-pow((T+c)/(TLambda+c),5.7)),-3));
+	
+//volScalarField onebyf
+//(
+//    IOobject
+//    (
+//        "onebyf",
+//        runTime.timeName(),
+//        mesh,
+//        IOobject::NO_READ,
+//        IOobject::NO_WRITE
+//    ),
+//	mesh,
+//    dimensionedScalar("onebyf", dimensionSet(3,1,-9,-1,0,0,0), 1.169728e13)
+//);
+//	kHe = pow(onebyf/magGradT2, 1./3); // VAN SCIVER
+	
 	// To jest potrzebne do alphatJayatille....
 	Pr = cp*laminarTransport.etaHe()/kHe;
 	//pow(laminarTransport.onebyf()/max(pow(mag(fvc::grad(T)),2), dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)), 1./3);
 
+	//Info<< "SFTC = " << laminarTransport.onebyf() << endl;
+	//Info<< "1/f from Kitamura = " << 1./(AGM*rhon/pow(rhos*sHe*T,3)/sHe) << endl;
 	volVectorField M
 	(
 		fvc::div
@@ -48,7 +77,7 @@
 			fvc::laplacian(gradT) + 1./3*fvc::grad(fvc::div(gradT))
 		)
 	);
-	Info<< "max(M) = " << max(M) << endl;
+	//Info<< "max(M) = " << max(M) << endl;
 
 	// TODO: zastanowic sie czy nie powinno byc
 	// rho pod pochodna jak jest w buoyantPimpleFoam
@@ -65,7 +94,6 @@
       + turbulence->divDevReff(U)
 	  //- fvm::laplacian(laminarTransport.etaHe()/(rho/rhok), U)
       //- fvc::div(laminarTransport.etaHe()/(rho/rhok)*dev(fvc::grad(U)().T()))
-	  //+ laminarTransport.etaHe()/(rho/rhok)*fvm::laplacian(U)
      ==
         fvOptions(U)
     );

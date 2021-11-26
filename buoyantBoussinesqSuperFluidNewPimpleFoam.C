@@ -219,6 +219,8 @@ int main(int argc, char *argv[])
 
         runTime.printExecutionTime(Info);
     }
+	
+	Info<< "rho*sHe*T*(Un-Us)" << rhos*sHe*T*(Un-Us) << endl;
 
     Info<< "End\n" << endl;
 
