@@ -18,11 +18,12 @@
       - fvm::laplacian(alphaEff, T)
      ==
         radiation->ST(rhoCpRef, T)
-	  + (
-			mutualFrictionGM
-		  ? AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp
-	      : AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp*0
-		)
+	  + AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp
+	//  + (
+	//		mutualFrictionGM
+	//	  ? AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp
+	//      : AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp*0
+	//	)
       + fvOptions(T)
     );
 

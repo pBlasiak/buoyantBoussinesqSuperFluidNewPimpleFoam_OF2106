@@ -28,7 +28,6 @@ volScalarField Pr
         IOobject::NO_READ,
         IOobject::NO_WRITE
     ),
-	//superFluid->Pr()
 	laminarTransport.cpHe()*laminarTransport.etaHe()/
 	pow(laminarTransport.onebyf()/max(pow(mag(fvc::grad(T)),2), dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)), 1./3)
 );

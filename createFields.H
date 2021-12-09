@@ -284,8 +284,7 @@ volScalarField alphaEff
         IOobject::AUTO_WRITE
     ),
 	mesh,
-		    	   dimensionedScalar("small", dimensionSet(0,2,-1,0,0,0,0), SMALL)
-    //superFluid->alpha()/rho/cp
+	dimensionedScalar("small", dimensionSet(0,2,-1,0,0,0,0), SMALL)
 );
 
 volScalarField kHe
@@ -301,17 +300,6 @@ volScalarField kHe
 	mesh,
     dimensionedScalar("small", dimensionSet(1,1,-3,-1,0,0,0), SMALL)
 );
-//kHe = 
-//	pow
-//	(
-//		laminarTransport.onebyf()/
-//		max
-//		(
-//			pow(mag(fvc::grad(T)),2), 
-//			dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
-//		), 
-//		1./3
-//	);
 
 surfaceScalarField q
 (
@@ -324,8 +312,6 @@ surfaceScalarField q
         IOobject::AUTO_WRITE
     ),
 fvc::interpolate(rhos*sHe*T*(Un.component(1) - Us.component(1)))
-//fvc::interpolate(pow(laminarTransport.onebyf()/max(pow(mag(fvc::grad(T)),2), dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)), 1./3)/(rho/rhok)/cp
-//)*fvc::snGrad(T)
 );
 
 volVectorField gradT
@@ -371,19 +357,4 @@ volScalarField magGradT2
 	mesh,
     dimensionedScalar("small", dimensionSet(0,-2,0,2,0,0,0), SMALL)
 );
-//magGradT2 = 
-//		max
-//		(
-//			pow(mag(gradT),2),
-//			dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)
-//		); 
 
-	Info<< "IIIIIIIIIIIIIIIIIII" << magGradT2 << endl;
-	rho = laminarTransport.rhoHe();
-	rhon = laminarTransport.rhon();
-	rhos = laminarTransport.rhos();
-	AGM = laminarTransport.AGMHe();
-	sHe = laminarTransport.sHe();
-	beta = laminarTransport.betaHe();
-	cp = laminarTransport.cpHe();
-    rhok = 1.0 - beta*(T - TRef);
