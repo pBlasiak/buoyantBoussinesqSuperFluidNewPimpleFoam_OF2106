@@ -25,6 +25,7 @@
 		gradT = fvc::grad(T);	
 	}
 	magGradT = max(mag(gradT), dimensionedScalar("small", dimTemperature/dimLength, SMALL)); 
+	Info<< "magGradT = " << magGradT << endl;
 	magGradT2 = pow(magGradT,2);
 	
 	// (1/(f|gradT|^2))^(1/3)

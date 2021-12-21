@@ -14,8 +14,8 @@
       + phig
       + phiM
     );
-	Info<< "max(phig) = " << max(phig) << endl;
-	Info<< "max(phiM) = " << max(phiM) << endl;
+	//Info<< "max(phig) = " << max(phig) << endl;
+	//Info<< "max(phiM) = " << max(phiM) << endl;
 
     MRF.makeRelative(phiHbyA);
 
