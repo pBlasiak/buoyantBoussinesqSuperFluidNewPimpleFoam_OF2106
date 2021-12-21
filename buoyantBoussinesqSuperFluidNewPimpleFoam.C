@@ -78,7 +78,9 @@ int main(int argc, char *argv[])
     #include "createControl.H"
     #include "createFields.H"
     #include "createTimeControls.H"
+    #include "getCellDims.H"
     #include "CourantNo.H"
+    #include "SuekaneNo.H"
     #include "setInitialDeltaT.H"
     #include "initContinuityErrs.H"
 
@@ -92,6 +94,8 @@ int main(int argc, char *argv[])
     {
         #include "readTimeControls.H"
         #include "CourantNo.H"
+    #include "createTimeControls.H"
+    #include "SuekaneNo.H"
         #include "setDeltaT.H"
 
         ++runTime;
