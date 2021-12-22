@@ -37,7 +37,7 @@ References:
 scalar SuekaneNum = 0.0;
 //scalar meanGalusinskiVigneauxNum = 0.0;
 
-    SuekaneNum = gMax(3*runTime.deltaTValue()/
+    SuekaneNum = gMax(runTime.deltaTValue()/
 			(pow(laminarTransport.onebyf()*magGradT2, -1./3)*laminarTransport.rhoHe()
 	*laminarTransport.cpHe()*pow(CellDims.field(),2)));
 
