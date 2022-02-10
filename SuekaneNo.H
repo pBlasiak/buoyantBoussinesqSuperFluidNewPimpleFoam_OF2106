@@ -41,33 +41,8 @@ scalar SuekaneNum = 0.0;
 			(pow(laminarTransport.onebyf()*magGradT2, -1./3)*laminarTransport.rhoHe()
 	*laminarTransport.cpHe()*pow(CellDims.field(),2)));
 
-
+   Info << "SuekaneNum max: " << SuekaneNum << endl;
     //meanGalusinskiVigneauxNum = gAverage( 1.0/(0.5*(C2*tauMu + sqrt(pow(C2*tauMu, 2) + 4*C1*tauRho*tauRho)))*
 //								runTime.deltaTValue());
-
 //Info<< "GalusinskiVigneaux Number mean: " << meanGalusinskiVigneauxNum
-   Info << "SuekaneNum max: " << SuekaneNum << endl;
-   //Info << "delta t powinno byc: " << gMax(pow(laminarTransport.onebyf()*magGradT2, -1./3)*laminarTransport.rhoHe()
-	//*laminarTransport.cpHe()*pow(CellDims.field(),2)/3) << endl;
-//Info<< "GV dt: " << GVdt << endl;
-
-//// Courant number calculation for comparison
-//scalar CoNum = 0.0;
-//scalar meanCoNum = 0.0;
-//
-//if (mesh.nInternalFaces())
-//{
-//    scalarField sumPhi
-//    (
-//        fvc::surfaceSum(mag(phi))().primitiveField()
-//    );
-//
-//    CoNum = 0.5*gMax(sumPhi/mesh.V().field())*runTime.deltaTValue();
-//
-//    meanCoNum =
-//        0.5*(gSum(sumPhi)/gSum(mesh.V().field()))*runTime.deltaTValue();
-//}
-//
-//Info<< "Courant Number mean: " << meanCoNum
-//    << " max: " << CoNum << endl;
 // ************************************************************************* //

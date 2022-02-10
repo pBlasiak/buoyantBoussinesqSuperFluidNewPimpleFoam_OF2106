@@ -1,48 +1,72 @@
-    // Solve the momentum equation
+// Solve the momentum equation
 
-    MRF.correctBoundaryVelocity(U);
+MRF.correctBoundaryVelocity(U);
 
-	//czy ta zmienna jest widoczna w TEqn czy znika zaraz po 
-	//opuszczeniu UEqn?
-	//volVectorField gradT(fvc::grad(T));
-	
-	// Update properties for M
-	rho = laminarTransport.rhoHe();
-	rhon = laminarTransport.rhon();
-	rhos = laminarTransport.rhos();
-	AGM = laminarTransport.AGMHe();
-	sHe = laminarTransport.sHe();
-	beta = laminarTransport.betaHe();
-	cp = laminarTransport.cpHe();
-    rhok = 1.0 - beta*(T - TRef);
-	if(gradP)
-	{
-		Info<< "Licze z gradP!!!!" << endl;
-		gradT = fvc::grad(T)-fvc::grad(p*(rho/rhok))/rho/sHe;	
-	}
-	else
-	{
-		gradT = fvc::grad(T);	
-	}
-	magGradT = max(mag(gradT), dimensionedScalar("small", dimTemperature/dimLength, SMALL)); 
-	//Info<< "magGradT = " << magGradT << endl;
-	magGradT2 = pow(magGradT,2);
-	
-	// (1/(f|gradT|^2))^(1/3)
-	//kHe = pow(laminarTransport.onebyf()/magGradT2, 1./3);  // HEPAK
-	kHe = pow(1./(AGM*rhon/pow(rhos*sHe*T,3)/sHe)/magGradT2, 1./3); // KITAMURA
-	
-	//const dimensionedScalar sLambda("sLambda", dimensionSet(0,2,-2,-1,0,0,0), 1560);
-	//const dimensionedScalar Ac("Ac", dimensionSet(-1,1,1,0,0,0,0), 1297);
-	//const dimensionedScalar TLambda("TLambda", dimTemperature, 2.168);
-	//const dimensionedScalar c("c", dimTemperature, 0.01);
-	//kHe = pow(1./(Ac/rho/rho/pow(sLambda,4)/pow(TLambda,3)*
-	//			pow(pow((T+c)/(TLambda+c),5.7)*(1-pow((T+c)/(TLambda+c),5.7)),-3))
-	//		/magGradT2, 1./3); // SUEKANE
+//czy ta zmienna jest widoczna w TEqn czy znika zaraz po 
+//opuszczeniu UEqn?
+//volVectorField gradT(fvc::grad(T));
 
-	//Info<< "f^-1 = " << 1./(Ac/rho/rho/pow(sLambda,4)/pow(TLambda,3)*
-	//			pow(pow((T+c)/(TLambda+c),5.7)*(1-pow((T+c)/(TLambda+c),5.7)),-3));
-	
+// Update properties for M
+rho = laminarTransport.rhoHe();
+rhon = laminarTransport.rhon();
+rhos = laminarTransport.rhos();
+AGM = laminarTransport.AGMHe();
+sHe = laminarTransport.sHe();
+beta = laminarTransport.betaHe();
+cp = laminarTransport.cpHe();
+rhok = 1.0 - beta*(T - TRef);
+if(gradP)
+{
+	Info<< "Licze z gradP!!!!" << endl;
+	gradT = fvc::grad(T)-fvc::grad(p*(rho/rhok))/rho/sHe;	
+}
+else
+{
+	gradT = fvc::grad(T);	
+}
+magGradT = max(mag(gradT), dimensionedScalar("small", dimTemperature/dimLength, SMALL)); 
+//Info<< "magGradT = " << magGradT << endl;
+magGradT2 = pow(magGradT,2);
+
+
+switch (kHeModel)
+{
+	case HeliumThermalConductivityModel::Hepak:
+		 {
+			kHe = pow(laminarTransport.onebyf()/magGradT2, 1./3);  // HEPAK
+		 	break;
+		 }
+
+	case HeliumThermalConductivityModel::Kitamura:
+		 {
+			kHe = pow(1./(AGM*rhon/pow(rhos*sHe*T,3)/sHe)/magGradT2, 1./3); // KITAMURA
+		 	break;
+		 }
+
+	case HeliumThermalConductivityModel::Suekane:
+		 {
+			const dimensionedScalar sLambda("sLambda", dimensionSet(0,2,-2,-1,0,0,0), 1560);
+		 	const dimensionedScalar Ac("Ac", dimensionSet(-1,1,1,0,0,0,0), 1297);
+		 	const dimensionedScalar TLambda("TLambda", dimTemperature, 2.168);
+		 	const dimensionedScalar c("c", dimTemperature, 0.01);
+		 	kHe = pow(1./(Ac/rho/rho/pow(sLambda,4)/pow(TLambda,3)*
+		 				pow(pow((T+c)/(TLambda+c),5.7)*(1-pow((T+c)/(TLambda+c),5.7)),-3))
+		 			/magGradT2, 1./3); // SUEKANE
+		 	//Info<< "f^-1 = " << 1./(Ac/rho/rho/pow(sLambda,4)/pow(TLambda,3)*
+		 	//			pow(pow((T+c)/(TLambda+c),5.7)*(1-pow((T+c)/(TLambda+c),5.7)),-3));
+		 	break;
+		 }
+
+	default:
+		 FatalErrorInFunction
+    	     << "Unknown helium thermal conductivity model. Valid models are: "
+    	     << HeliumThermalConductivityModelNames_ << nl << exit(FatalError);
+		 break;
+}
+
+
+
+
 //volScalarField onebyf
 //(
 //    IOobject
@@ -60,7 +84,6 @@
 	
 	// To jest potrzebne do alphatJayatille....
 	Pr = cp*laminarTransport.etaHe()/kHe;
-	//pow(laminarTransport.onebyf()/max(pow(mag(fvc::grad(T)),2), dimensionedScalar("small", dimTemperature*dimTemperature/dimLength/dimLength, SMALL)), 1./3);
 
 	//Info<< "SFTC = " << laminarTransport.onebyf() << endl;
 	//Info<< "1/f from Kitamura = " << 1./(AGM*rhon/pow(rhos*sHe*T,3)/sHe) << endl;
