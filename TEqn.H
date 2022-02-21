@@ -10,6 +10,8 @@
 	//Info<< "rho w TEqn.H = " << rho << endl;
 	//Info<< "rhok w TEqn.H = " << rhok << endl;
 	//Info<< "cp w TEqn.H = " << cp << endl;
+	//
+
 
     fvScalarMatrix TEqn
     (
@@ -18,12 +20,13 @@
       - fvm::laplacian(alphaEff, T)
      ==
         radiation->ST(rhoCpRef, T)
-	  + AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp
-	//  + (
-	//		mutualFrictionGM
-	//	  ? AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp
-	//      : AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp*0
-	//	)
+	//  + AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp
+	  + (
+			mutualFrictionGM
+		  ? AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp
+	      : AGM0
+	      //: AGM*rhon*rhos*pow(sHe/AGM/rhon*magGradT,4./3)/(rho/rhok)/cp*0
+		)
       + fvOptions(T)
     );
 

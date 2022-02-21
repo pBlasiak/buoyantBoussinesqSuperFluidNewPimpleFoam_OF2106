@@ -174,6 +174,24 @@ volScalarField AGM
     ),
 	laminarTransport.AGMHe()
 );
+
+tmp<volScalarField> AGM0
+(
+	new volScalarField 
+	(
+		IOobject
+    	(
+    	    "AGM0",
+    	    runTime.timeName(),
+    	    mesh,
+    	    IOobject::NO_READ,
+    	    IOobject::NO_WRITE
+    	),
+		mesh,
+		dimensionedScalar("AGM0", dimensionSet(0,0,-1,1,0,0,0), 0)
+	)
+);
+
 #include "readGravitationalAcceleration.H"
 #include "readhRef.H"
 #include "gh.H"
