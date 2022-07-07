@@ -94,8 +94,8 @@ int main(int argc, char *argv[])
     {
         #include "readTimeControls.H"
         #include "CourantNo.H"
-    #include "createTimeControls.H"
-    #include "SuekaneNo.H"
+	    #include "createTimeControls.H"
+		#include "SuekaneNo.H"
         #include "setDeltaT.H"
 
         ++runTime;
@@ -126,8 +126,6 @@ int main(int argc, char *argv[])
 		// updates q
 		// teraz q liczone na bazie stare rhos i sHe i nowe T, Un i Us
 		q = fvc::interpolate(rhos*sHe*T*(Un.component(1) - Us.component(1)));
-		Info << sHe.weightedAverage(mesh.V()) << endl;
-		Info << rhos.weightedAverage(mesh.V()) << endl;
 		const surfaceScalarField::Boundary& patchHeatFlux = q.boundaryField();
         Info<< "\nWall heat fluxes " << endl;
         forAll(patchHeatFlux, patchi)
@@ -161,24 +159,6 @@ int main(int argc, char *argv[])
             }
 	}
 
-
-
-        //surfaceScalarField gradT=fvc::snGrad(T);
-        //surfaceScalarField gradp
-        //(
-        //    IOobject
-        //    (
-        //        "gradp0",
-        //        runTime.timeName(),
-        //        mesh
-        //    ),
-        //    mesh,
-        //    dimensionedScalar("gradp0", dimTemperature/dimLength, 0)
-        //);
-		//if (superFluid->type() == "Pietrowicz")
-		//{
-		//	gradp = -fvc::snGrad(p*rho)/fvc::interpolate(rho*s);
-		//}
 
 		// Tutaj pewna niescislosc bo nowo liczony gradT a stare alphaEff, cp i rho
         surfaceScalarField heatFluxFromAlphaEff =
@@ -218,14 +198,12 @@ int main(int argc, char *argv[])
                     << " [W/m2])"
                     << endl;
             }
-      }
+        }
         runTime.write();
 
         runTime.printExecutionTime(Info);
     }
 	
-	Info<< "rho*sHe*T*(Un-Us)" << rhos*sHe*T*(Un-Us) << endl;
-
     Info<< "End\n" << endl;
 
     return 0;
